@@ -45,7 +45,9 @@ class Actions:
 
         """
         
-        Direction_Map = {"N": "N", "NORD": "N", "E": "E", "EST": "E", "S": "S", "SUD": "S", "O": "O", "OUEST": "O", "UP": "UP", "HAUT": "UP", "DOWN": "DOWN", "BAS": "DOWN"}
+        Direction_Map = {"N": "N", "NORD": "N", "E": "E", "EST": "E", "S":
+                        "S", "SUD": "S", "O": "O", "OUEST": "O", "UP": "UP",
+                        "HAUT": "UP", "DOWN": "DOWN", "BAS": "DOWN"}
 
 
         player = game.player
@@ -78,6 +80,35 @@ class Actions:
         # Déplacement réussi
         player.move(direction)
         return True
+    
+    def back(game, list_of_words, number_of_parameters):
+        """
+        Return the player to the previous action.
+
+        Args:
+            game (Game): The game object.
+            list_of_words (list): The list of words in the command.
+            number_of_parameters (int): The number of parameters expected by the command.
+
+        Returns:
+            bool: True if the command was executed successfully, False otherwise.
+        """
+        l = len(list_of_words)
+        if l != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG0.format(command_word=command_word))
+            return False
+
+        # Vérifier si le joueur a un historique d'actions
+        if len(game.player.history) > 0:  # Assurez-vous d'accéder à l'historique du joueur via l'objet game
+            previous_location = game.player.history.pop()  # Obtenir la dernière location
+            game.player.current_room = previous_location  # Revenir à la location précédente
+            print(f"\nVous êtes retourné à : {previous_location}")  # Afficher la représentation de la salle
+            print(game.player.get_history())
+            return True
+        else:
+            print("Euh ?? Vous êtes déjà au début... vous ne pouvez pas mieux faire.. AH SI ! fermer le jeu ;)")
+            return False
 
     def quit(game, list_of_words, number_of_parameters):
         """
@@ -157,3 +188,83 @@ class Actions:
             print("\t- " + str(command))
         print()
         return True
+    
+    def history(game, list_of_words, number_of_parameters):
+        """
+        Affiche l'historique des actions du joueur.
+
+        Print the list of available commands.
+        
+        Args:
+            game (Game): The game object.
+            list_of_words (list): The list of words in the command.
+            number_of_parameters (int): The number of parameters expected by the command.
+
+        Returns:
+            bool: True if the command was executed successfully, False otherwise.
+
+        Examples:
+        """
+        l = len(list_of_words)
+        if l != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG0.format(command_word=command_word))
+            return False
+
+        # Afficher l'historique
+        print(game.player.get_history())
+        print()
+        return True
+    
+    def check(game, list_of_words, number_of_parameters):
+        """
+        Affiche l'inventaire du joueur.
+        
+        Args:
+            game (Game): The game object.
+            list_of_words (list): The list of words in the command.
+            number_of_parameters (int): The number of parameters expected by the command.
+
+        Returns:
+            bool: True if the command was executed successfully, False otherwise.
+
+        Examples:
+        """
+        l = len(list_of_words)
+        if l != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG0.format(command_word=command_word))
+            return False
+
+        # Afficher l'inventaire
+        print(game.player.get_inventory())
+        print()
+        return True
+    
+    def look(game, list_of_words, number_of_parameters):
+        """
+        Affiche les items dans la pièce.
+        
+        Args:
+            game (Game): The game object.
+            list_of_words (list): The list of words in the command.
+            number_of_parameters (int): The number of parameters expected by the command.
+
+        Returns:
+            bool: True if the command was executed successfully, False otherwise.
+
+        Examples:
+        """
+        l = len(list_of_words)
+        if l != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG0.format(command_word=command_word))
+            return False
+
+        # Afficher l'inventaire
+        print(game.player.current_room.get_inventory())
+        print()
+        return True
+    
+    def take(game, list_of_words, number_of_parameters) :
+        

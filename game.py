@@ -16,7 +16,8 @@ class Game:
         self.commands = {}
         self.player = None
         self.directions = set()
-    
+        self.history = []  # Historique des pièces visitées
+
     # Setup the game
     def setup(self):
 
@@ -28,7 +29,15 @@ class Game:
         self.commands["quit"] = quit
         go = Command("go", " <direction> : se déplacer dans une direction cardinale (N, E, S, O, UP, DOWN)", Actions.go, 1)
         self.commands["go"] = go
-
+        back = Command("back", " : revenir à l'endroit précédent", Actions.back, 0)
+        self.commands["back"] = back
+        history = Command("history", " : afficher l'historique", Actions.history, 0)
+        self.commands["history"] = history
+        check = Command("check", " : afficher l'inventaire du personnage", Actions.check, 0)
+        self.commands["check"] = check
+        look = Command("look", " : afficher l'inventaire du personnage", Actions.look, 0)
+        self.commands["look"] = look
+    
         # Liste des directions possibles
         self.directions = {"N", "E", "S", "O", "UP", "DOWN"}
         Direction_Map = {"N": "N", "NORD": "N", "E": "E", "EST": "E", "S": "S", "SUD": "S", "O": "O", "OUEST": "O", "UP": "UP", "HAUT": "UP", "DOWN": "DOWN", "BAS": "DOWN"}
@@ -156,9 +165,9 @@ class Game:
 
         # Split the command string into a list of words
         list_of_words = command_string.split(" ")
-
+        
         command_word = list_of_words[0]
-
+        
         if not command_word :
             return  
 
@@ -168,6 +177,7 @@ class Game:
         # If the command is recognized, execute it
         else:
             command = self.commands[command_word]
+
             command.action(self, list_of_words, command.number_of_parameters)
 
     # Print the welcome message
