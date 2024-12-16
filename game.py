@@ -1,7 +1,6 @@
 # Description: Game class
 
 # Import modules
-
 from room import Room
 from player import Player
 from command import Command
@@ -37,7 +36,10 @@ class Game:
         self.commands["check"] = check
         look = Command("look", " : afficher l'inventaire du personnage", Actions.look, 0)
         self.commands["look"] = look
-    
+        drop= Command("drop", " : déposer l'objet", Actions.drop , 0)
+        self.commands["drop"] = drop
+        take=Command("take"," : prendre l'objet", Actions.take , 0)
+        self.commands["take"] = take
         # Liste des directions possibles
         self.directions = {"N", "E", "S", "O", "UP", "DOWN"}
         Direction_Map = {"N": "N", "NORD": "N", "E": "E", "EST": "E", "S": "S", "SUD": "S", "O": "O", "OUEST": "O", "UP": "UP", "HAUT": "UP", "DOWN": "DOWN", "BAS": "DOWN"}
@@ -99,7 +101,7 @@ class Game:
 
         blaze_spawn = Room("Blaze spawn","dans la forteresse. Il serait intéressant de récuperer des blaze rod")
         self.rooms.append(blaze_spawn)
-
+        
         portal_nether2 = Room("Portal Nether -> Overworld", "au niveau du portail pour rentrer dans la dimension originelle.")
         self.rooms.append(portal_nether2)
 
@@ -107,40 +109,62 @@ class Game:
         # Create exits for rooms
 
         forest1.exits = {"N" : front_village, "E" : None, "S" : None, "O" : None, "UP" : None, "DOWN" : None}
+        forest1.inventory_room = {"stick" : ("stick", "Petit batôn provenant d'un arbre", 1)}
+
 
         forest2.exits = {"N" : None, "E" : forest3, "S" : None, "O" : forest1, "UP" : None, "DOWN" : None}
+        forest2.inventory_room = {"sick" : ("stick", "Petit batôn provenant d'un arbre", 1)}
+
 
         forest3.exits = {"N" : front_cave, "E" : None, "S" : None, "O" : forest2, "UP" : None, "DOWN" : None}
+        forest3.inventory_room = {"stick" : ("stick", "Petit batôn provenant d'un arbre", 1)}
+
 
         front_village.exits = {"N" : house_ground_floor, "E" : fontain, "S" : forest1, "O" : None, "UP" : None, "DOWN" : None}
 
+
         house_ground_floor.exits = {"N" : None, "E" : None, "S" : front_village, "O" : None, "UP" : pnj_floor, "DOWN" : None}
+
 
         pnj_floor.exits = {"N" : None, "E" : None, "S" : None, "O" : None, "UP" : None, "DOWN" : house_ground_floor}
 
+
         meadow.exits = {"N" : None, "E" : None, "S" : fontain, "O" : None, "UP" : None, "DOWN" : None}
+
 
         fontain.exits = {"N" : meadow, "E" : front_cave, "S" : None, "O" : front_village, "UP" : None, "DOWN" : None}
 
+
         front_cave.exits = {"N" : None, "E" : None, "S" : forest3, "O" : fontain, "UP" : None, "DOWN" : iron_ore}
 
+
         iron_ore.exits = {"N" : diamond_ore, "E" : lava_lake, "S" : None, "O" : mob_cave, "UP" : front_cave, "DOWN" : None}
+        iron_ore.inventory_room = {"iron" : ("iron", "Lingot de fer provenant de la roche", 1)}
 
         diamond_ore.exits = {"N" : None, "E" : None, "S" : iron_ore, "O" : None, "UP" : None, "DOWN" : None}
+        diamond_ore.inventory_room = {"diamond" : ("diamond", "Pierre précieuse de couleurs bleu", 1)}
+
 
         mob_cave.exits = {"N" : stronghold, "E" : iron_ore, "S" : None, "O" : None, "UP" : None, "DOWN" : None}
 
+
         stronghold.exits = {"N" : None, "E" : None, "S" : mob_cave, "O" : portal_overwolrd, "UP" : None, "DOWN" : None}
+
 
         enderdragon.exits = {"N" : None, "E" : None, "S" : None, "O" : None, "UP" : None, "DOWN" : None}
 
+
         portal_overwolrd.exits = {"N" : front_village, "E" : front_village, "S" : front_village, "O" : front_village, "UP" : None, "DOWN" : None}
+
 
         lava_lake.exits = {"N" : portal_nether, "E" : None, "S" : None, "O" : iron_ore, "UP" : None, "DOWN" : None}
 
+
         portal_nether.exits = {"N" : None, "E" : portal_nether2, "S" : lava_lake, "O" : None, "UP" : None, "DOWN" : None}
 
+
         blaze_spawn.exits = {"N" : None, "E" : None, "S" : None, "O" : portal_nether2, "UP" : None, "DOWN" : None}
+        blaze_spawn.inventory_room = {"blaze_rod" : ("blaze rod", "Petit batôn provenant d'un blaze", 1)}
 
         portal_nether2.exits = {"N" : None, "E" : blaze_spawn, "S" : None, "O" : portal_nether, "UP" : None, "DOWN" : None}
 

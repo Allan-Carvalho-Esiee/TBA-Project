@@ -266,5 +266,74 @@ class Actions:
         print()
         return True
     
-    def take(game, list_of_words, number_of_parameters) :
-        
+    # Fonction 'take' pour prendre un item de la pièce et l'ajouter à l'inventaire du joueur
+    def take(game, list_of_words, number_of_parameters):
+        """
+        Prend un item dans la pièce où le joueur se trouve et l'ajoute à son inventaire.
+
+        Args:
+            game (Game): L'objet du jeu.
+            list_of_words (list): La liste des mots dans la commande (doit contenir l'item à prendre).
+            number_of_parameters (int): Le nombre de paramètres attendus (1 paramètre - l'item à prendre).
+
+        Returns:
+            bool: True si la commande a été exécutée avec succès, False sinon.
+        """
+        l = len(list_of_words)
+        if l != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG1.format(command_word=command_word))  # Affichage de l'erreur si le nombre de paramètres est incorrect
+            return False
+
+        # Vérifier que l'item existe dans l'inventaire de la pièce
+        item_name = list_of_words[1]
+        player = game.player
+        item = next((item for item in player.current_room.inventory if item.name == item_name), None)
+
+        if not item:
+            print(f"\nL'objet '{item_name}' n'est pas dans cette pièce.\n")
+            return False
+
+        # Ajouter l'item à l'inventaire du joueur
+        player.inventory.append(item)
+        # Retirer l'item de l'inventaire de la pièce
+        player.current_room.inventory.remove(item)
+
+        print(f"\nVous avez pris l'objet '{item_name}' et l'avez ajouté à votre inventaire.\n")
+        return True
+
+    # Fonction 'drop' pour reposer un item dans la pièce
+    def drop(game, list_of_words, number_of_parameters):
+        """
+        Repose un item dans la pièce où le joueur se trouve et l'enlève de son inventaire.
+
+        Args:
+            game (Game): L'objet du jeu.
+            list_of_words (list): La liste des mots dans la commande (doit contenir l'item à poser).
+            number_of_parameters (int): Le nombre de paramètres attendus (1 paramètre - l'item à poser).
+
+        Returns:
+            bool: True si la commande a été exécutée avec succès, False sinon.
+        """
+        l = len(list_of_words)
+        if l != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG1.format(command_word=command_word))  # Affichage de l'erreur si le nombre de paramètres est incorrect
+            return False
+
+        # Vérifier que l'item est dans l'inventaire du joueur
+        item_name = list_of_words[1]
+        player = game.player
+        item = next((item for item in player.inventory if item.name == item_name), None)
+
+        if not item:
+            print(f"\nVous n'avez pas l'objet '{item_name}' dans votre inventaire.\n")
+            return False
+
+        # Retirer l'item de l'inventaire du joueur
+        player.inventory.remove(item)
+        # Ajouter l'item à l'inventaire de la pièce
+        player.current_room.inventory.append(item)
+
+        print(f"\nVous avez reposé l'objet '{item_name}' dans cette pièce.\n")
+        return True
