@@ -45,10 +45,11 @@ class Room:
             str: Une chaîne formatée listant l'inventaire'
         """
         if not self.inventory_room : # Si l'inventaire est vide
-            return "il n'y a rien ici.ac"
+            return "il n'y a rien ici"
 
         else:
             inventory_list = ["Vous disposez des items suivants :"]
             for item in self.inventory_room.values():
                 inventory_list.append(f"    - {item}")
             return "\n".join(inventory_list)  # Retourne la chaîne formatée
+

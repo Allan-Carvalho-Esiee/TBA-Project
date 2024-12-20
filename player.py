@@ -1,4 +1,5 @@
 # Définition de la classe Player
+from item import *
 
 class Player:
     def __init__(self, name):
@@ -11,8 +12,9 @@ class Player:
         self.name = name
         self.current_room = None  # La pièce actuelle du joueur
         self.history = []  # Historique des pièces visitées
-        self.inventory_player = {}  # Dictionnaire pour l'inventaire
-
+        self.inventory_player = {"diamond_sword" : Item("épée en diamant", "une épée au fil tranchant comme un rasoir", 2)}  # Dictionnaire pour l'inventaire
+        self.max_poids = 15
+        
     def move(self, direction):
         """
         Déplace le joueur dans la direction spécifiée et met à jour l'historique.
