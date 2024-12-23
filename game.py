@@ -7,6 +7,7 @@ from player import Player
 from command import Command
 from actions import Actions
 from item import *
+from character import Character
 
 
 class Game:
@@ -41,8 +42,12 @@ class Game:
         self.commands["look"] = look
         drop= Command("drop", " : déposer l'objet", Actions.drop , 0)
         self.commands["drop"] = drop
-        take=Command("take"," : prendre l'objet", Actions.take , 0)
+        take=Command("take", " : prendre l'objet", Actions.take , 0)
         self.commands["take"] = take
+        move=Command("move", " : déplacer le pnj dans une autre pièce avec un certain pourcentage de chance", Actions.move , 0)
+        self.commands["move"] = move
+        talk=Command("talk"," : parler au pnj", Actions.talk , 1)
+        self.commands["talk"] = talk
     
         # Liste des directions possibles
         self.directions = {"N", "E", "S", "O", "UP", "DOWN"}
@@ -64,7 +69,7 @@ class Game:
 
         house_ground_floor = Room ("Ground_floor", "vous êtes au rez de chaussée de la maison, à l'étage vous trouverez le PNJ." )
         self.rooms.append(house_ground_floor)
-
+      
         pnj_floor = Room("Pnj", "à cet étage, vous avez face à vous le pnj qui vous permettra de marchander." )
         self.rooms.append(pnj_floor)
 
@@ -110,7 +115,7 @@ class Game:
         self.rooms.append(portal_nether2)
 
 
-        # Create exits for rooms & inventory
+        # Create exits for rooms, inventory & character
 
         forest1.exits = {"N" : front_village, "E" : None, "S" : None, "O" : None, "UP" : None, "DOWN" : None}
         forest1.inventory_room = {"stick" : Item("bâton", "un bâton utile pour débuter", 1)}
@@ -124,7 +129,9 @@ class Game:
         front_village.exits = {"N" : house_ground_floor, "E" : fontain, "S" : forest1, "O" : None, "UP" : None, "DOWN" : None}
 
         house_ground_floor.exits = {"N" : None, "E" : None, "S" : front_village, "O" : None, "UP" : pnj_floor, "DOWN" : None}
-
+        villageois = Character("Villageois", "un villageois au couteau suisse", house_ground_floor, ["Bonjour, si vous voulez procéder à des échanges faites-moi signe. !", "Quand il y a un doute, il n'y a pas de doute, venez procéder à un échange ici !"])
+        house_ground_floor.characters[villageois.name] = villageois
+        
         pnj_floor.exits = {"N" : None, "E" : None, "S" : None, "O" : None, "UP" : None, "DOWN" : house_ground_floor}
 
         meadow.exits = {"N" : None, "E" : None, "S" : fontain, "O" : None, "UP" : None, "DOWN" : None}

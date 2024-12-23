@@ -16,6 +16,11 @@ MSG0 = "\nLa commande '{command_word}' ne prend pas de paramètre.\n"
 # The MSG1 variable is used when the command takes 1 parameter.
 MSG1 = "\nLa commande '{command_word}' prend 1 seul paramètre.\n"
 
+
+import random
+
+DEBUG = True
+
 class Actions:
 
     def go(game, list_of_words, number_of_parameters):
@@ -331,3 +336,59 @@ class Actions:
         game.player.current_room.inventory_room[item_name] = item
 
         print(f"Vous avez reposé {item_name} : {item}.\n")
+
+
+    def move(self, list_of_words, number_of_parameters):
+        """
+        Déplace le personnage non joueur vers une pièce adjacente
+        avec une probabilité de 50%.
+
+        Returns:
+            bool: True si le personnage s'est déplacé, False sinon.
+        """
+        if random.choice([True, False]):  # 50% de chance de déplacement
+            exits = list(self.player.current_room.exits.values())
+            if exits:  # Vérifie s'il y a des pièces adjacentes
+                new_room = random.choice(exits)
+                self.player.current_room.characters.pop(self.character.name)  # Retire le personnage de l'ancienne salle
+                self.player.current_room = new_room
+                self.player.current_room.characters[self.character.name] = self  # Ajoute le personnage dans la nouvelle salle
+                
+                if DEBUG:
+                    print(f"DEBUG: {self.character.name} s'est déplacé vers {self.player.current_room.name}.")
+                return True
+        if DEBUG:
+            print(f"DEBUG: {self.character.name} est resté dans {self.player.current_room.name}.")
+        return False
+
+
+    def talk(game, list_of_words, number_of_parameters):
+        """
+        Interagit avec un PNJ mentionné dans la commande.
+
+        Args:
+            game (Game): L'objet du jeu.
+            list_of_words (list): Les mots de la commande.
+            number_of_parameters (int): Le nombre de paramètres attendus.
+
+        Returns:
+            bool: True si la commande est exécutée avec succès, False sinon.
+        """
+        if len(list_of_words) != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG1.format(command_word=command_word))
+            return False
+
+        # Vérifier si un PNJ est mentionné
+        pnj_name = list_of_words[1]
+        current_room = game.player.current_room
+
+        # Rechercher le PNJ dans la pièce
+        pnj = current_room.characters.get(pnj_name)
+        if not pnj:
+            print(f"Il n'y a pas de personnage nommé '{pnj_name}' ici.")
+            return False
+
+        # Appeler la méthode get_msg() du PNJ
+        print(pnj.get_msg())
+        return True
