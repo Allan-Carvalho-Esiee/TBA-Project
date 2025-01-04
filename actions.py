@@ -388,7 +388,54 @@ class Actions:
         if not pnj:
             print(f"Il n'y a pas de personnage nommé '{pnj_name}' ici.")
             return False
+        if pnj.is_hostile:
+            print(f"{pnj.name} Il s'agit d'un PNJ hostile, mieux vaut rester prudent.")
+            return False
 
         # Appeler la méthode get_msg() du PNJ
         print(pnj.get_msg())
         return True
+
+def attack(game, list_of_words, number_of_parameters):
+    """
+    Permet au joueur d'attaquer un PNJ hostile.
+
+    Args:
+        game (Game): L'objet du jeu.
+        list_of_words (list): Les mots de la commande, ex: ['attack', 'Zombie'].
+        number_of_parameters (int): Le nombre de paramètres attendus.
+
+    Returns:
+        bool: True si l'attaque a réussi, False sinon.
+    """
+    # Vérification du nombre de paramètres
+    if len(list_of_words) != number_of_parameters + 1:
+        command_word = list_of_words[0]
+        print(MSG1.format(command_word=command_word))
+        return False
+
+    target_name = list_of_words[1]
+    current_room = game.player.current_room
+
+    # Vérification si le PNJ cible est dans la pièce
+    target = current_room.characters.get(target_name)
+    if not target:
+        print(f"Il n'y a pas de personnage nommé '{target_name}' ici.")
+        return False
+
+    # Vérification si le PNJ est hostile
+    if not target.is_hostile:
+        print(f"{target.name} n'est pas hostile, vous ne pouvez pas l'attaquer.")
+        return False
+
+    # Infliger des dégâts au PNJ hostile
+    damage = random.randint(10, 30)
+    print(f"Vous attaquez {target.name} et infligez {damage} points de dégâts !")
+    target.take_damage(damage)
+
+    # Vérifier si le PNJ est vaincu
+    if target.hp <= 0:
+        del current_room.characters[target_name]
+        print(f"{target.name} a été éliminé de la pièce.")
+
+    return True

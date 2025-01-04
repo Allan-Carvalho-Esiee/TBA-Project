@@ -2,7 +2,7 @@
 
 
 class Character:
-    def __init__(self, name, description, current_room=None, msgs=None):
+    def __init__(self, name, description, current_room=None, msgs=None, is_hostile=False, hp=None):
         """
         Initialise un nouveau personnage non joueur.
 
@@ -16,6 +16,9 @@ class Character:
         self.description = description
         self.current_room = current_room
         self.msgs = msgs if msgs is not None else []
+        self.is_hostile = is_hostile
+        self.hp = hp
+
 
     def __str__(self):
         """
@@ -41,3 +44,4 @@ class Character:
         message = self.msgs.pop(0)
         self.msgs.append(message)
         return message
+        

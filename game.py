@@ -48,6 +48,8 @@ class Game:
         self.commands["move"] = move
         talk=Command("talk"," : parler au pnj", Actions.talk , 1)
         self.commands["talk"] = talk
+        attack=Command("attack"," : attaque un pnj hostile", Actions.attack, 0)
+        self.commands["attack"] = attack
     
         # Liste des directions possibles
         self.directions = {"N", "E", "S", "O", "UP", "DOWN"}
@@ -120,16 +122,23 @@ class Game:
         forest1.exits = {"N" : front_village, "E" : None, "S" : None, "O" : None, "UP" : None, "DOWN" : None}
         forest1.inventory_room = {"stick" : Item("bâton", "un bâton utile pour débuter", 1)}
 
+
+
         forest2.exits = {"N" : None, "E" : forest3, "S" : None, "O" : forest1, "UP" : None, "DOWN" : None}
         forest2.inventory_room = {"stick" : Item("bâton", "un bâton utile pour débuter", 1)}
+        zombie = Character("Zombie", "un homme ayant le regard vide et à l'allure affamée", forest2, None, True, 30 )
+        forest2.characters[zombie.name] = zombie
 
         forest3.exits = {"N" : front_cave, "E" : None, "S" : None, "O" : forest2, "UP" : None, "DOWN" : None}
         forest3.inventory_room = {"stick" : Item("bâton", "un bâton utile pour débuter", 1)}
+        zombie = Character("Zombie", "un homme ayant le regard vide et à l'allure affamée", forest3, None, True, 30)
+        forest3.characters[zombie.name] = zombie
+
 
         front_village.exits = {"N" : house_ground_floor, "E" : fontain, "S" : forest1, "O" : None, "UP" : None, "DOWN" : None}
 
         house_ground_floor.exits = {"N" : None, "E" : None, "S" : front_village, "O" : None, "UP" : pnj_floor, "DOWN" : None}
-        villageois = Character("Villageois", "un villageois au couteau suisse", house_ground_floor, ["Bonjour, si vous voulez procéder à des échanges faites-moi signe. !", "Quand il y a un doute, il n'y a pas de doute, venez procéder à un échange ici !"])
+        villageois = Character("Villageois", "un villageois au couteau suisse", house_ground_floor, ["Bonjour, si vous voulez procéder à des échanges faites-moi signe. !", "Quand il y a un doute, il n'y a pas de doute, venez procéder à un échange ici !"], False)
         house_ground_floor.characters[villageois.name] = villageois
         
         pnj_floor.exits = {"N" : None, "E" : None, "S" : None, "O" : None, "UP" : None, "DOWN" : house_ground_floor}
@@ -151,6 +160,8 @@ class Game:
         stronghold.exits = {"N" : None, "E" : None, "S" : mob_cave, "O" : portal_overwolrd, "UP" : None, "DOWN" : None}
 
         enderdragon.exits = {"N" : None, "E" : None, "S" : None, "O" : None, "UP" : None, "DOWN" : None}
+        enderdragons = Character("Enderdragons", "Un dragon volatn dans le ciel", enderdragon, None, True, 250)
+        enderdragon.characters[zombie.name] = enderdragons
 
         portal_overwolrd.exits = {"N" : front_village, "E" : front_village, "S" : front_village, "O" : front_village, "UP" : None, "DOWN" : None}
 
@@ -160,6 +171,8 @@ class Game:
 
         blaze_spawn.exits = {"N" : None, "E" : None, "S" : None, "O" : portal_nether2, "UP" : None, "DOWN" : None}
         blaze_spawn.inventory_room = Item("Blaze rod", "un bâton particulier qui nous servira plus tard", 0.3)
+        blaze = Character("Blaze", "un monstre enflammée volant au dessus de vous", blaze_spawn, None, True, 75)
+        blaze_spawn.characters[blaze.name] = blaze
 
         portal_nether2.exits = {"N" : None, "E" : blaze_spawn, "S" : None, "O" : portal_nether, "UP" : None, "DOWN" : None}
 
