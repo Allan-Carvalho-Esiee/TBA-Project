@@ -1,8 +1,13 @@
 # Définition de la classe Character
-
-
+'''
+Author Carvalho Allan & Brault Oscar
+'''
 class Character:
-    def __init__(self, name, description, current_room=None, msgs=None, is_hostile=False, hp=None):
+    '''
+    La classe Character permet d'établir la manière dont
+    un PNJ pourra interargir dans le monde ( ses actions ... )
+    '''
+    def __init__(self, name, description, current_room=None, msgs=None):
         """
         Initialise un nouveau personnage non joueur.
 
@@ -16,9 +21,6 @@ class Character:
         self.description = description
         self.current_room = current_room
         self.msgs = msgs if msgs is not None else []
-        self.is_hostile = is_hostile
-        self.hp = hp
-
 
     def __str__(self):
         """
@@ -39,9 +41,8 @@ class Character:
         """
         if not self.msgs:
             return f"{self.name} n'a rien à dire pour le moment."
-        
+
         # Retourne et réinsère le message à la fin de la liste
         message = self.msgs.pop(0)
         self.msgs.append(message)
         return message
-        

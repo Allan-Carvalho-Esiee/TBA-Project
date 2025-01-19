@@ -1,4 +1,7 @@
 # Description: Game class
+'''
+Author : Carvalho Allan & Brault Oscar
+'''
 
 # Import modules
 
@@ -8,10 +11,14 @@ from command import Command
 from actions import Actions
 from item import *
 from character import Character
+from monster import Monster
 
 
 class Game:
-
+    '''
+    La classe Game permet de créer 
+    l'environnement et la jouabilité
+    '''
     # Constructor
     def __init__(self):
         self.finished = False
@@ -20,6 +27,7 @@ class Game:
         self.player = None
         self.directions = set()
         self.history = []  # Historique des pièces visitées
+        self.inventory_room = {}
 
     # Setup the game
     def setup(self):
@@ -48,9 +56,11 @@ class Game:
         self.commands["move"] = move
         talk=Command("talk"," : parler au pnj", Actions.talk , 1)
         self.commands["talk"] = talk
-        attack=Command("attack"," : attaque un pnj hostile", Actions.attack, 0)
-        self.commands["attack"] = attack
-    
+        combat=Command("combat"," : combat les monstres", Actions.combat , 1)
+        self.commands["combat"] = combat
+        equip = Command("equip", ": équipe l'objet", Actions.equip, 1)
+        self.commands["equip"]= equip
+
         # Liste des directions possibles
         self.directions = {"N", "E", "S", "O", "UP", "DOWN"}
         Direction_Map = {"N": "N", "NORD": "N", "E": "E", "EST": "E", "S": "S", "SUD": "S", "O": "O", "OUEST": "O", "UP": "UP", "HAUT": "UP", "DOWN": "DOWN", "BAS": "DOWN"}
@@ -120,48 +130,52 @@ class Game:
         # Create exits for rooms, inventory & character
 
         forest1.exits = {"N" : front_village, "E" : None, "S" : None, "O" : None, "UP" : None, "DOWN" : None}
-        forest1.inventory_room = {"stick" : Item("bâton", "un bâton utile pour débuter", 1)}
-
-
+        forest1.inventory_room = {"stick" : Item("stick", "un stick utile pour débuter", 1)}
+        zombie = Monster("zombie", "Un zombie puant", 3, 1, forest1)
+        forest1.characters[zombie.name] = zombie
 
         forest2.exits = {"N" : None, "E" : forest3, "S" : None, "O" : forest1, "UP" : None, "DOWN" : None}
-        forest2.inventory_room = {"stick" : Item("bâton", "un bâton utile pour débuter", 1)}
-        zombie = Character("Zombie", "un homme ayant le regard vide et à l'allure affamée", forest2, None, True, 30 )
-        forest2.characters[zombie.name] = zombie
+        forest2.inventory_room = {"stick" : Item("stick", "un stick utile pour débuter", 1)}
+        squelette = Monster("squelette", "Un squelette éffrayant portant un arc", 3, 1, forest2)
+        forest2.characters[squelette.name] = squelette
 
         forest3.exits = {"N" : front_cave, "E" : None, "S" : None, "O" : forest2, "UP" : None, "DOWN" : None}
-        forest3.inventory_room = {"stick" : Item("bâton", "un bâton utile pour débuter", 1)}
-        zombie = Character("Zombie", "un homme ayant le regard vide et à l'allure affamée", forest3, None, True, 30)
+        forest3.inventory_room = {"stick" : Item("stick", "un stick utile pour débuter", 1)}
+        zombie = Monster("zombie", "Un zombie puant", 3, 1, forest3)
         forest3.characters[zombie.name] = zombie
-
 
         front_village.exits = {"N" : house_ground_floor, "E" : fontain, "S" : forest1, "O" : None, "UP" : None, "DOWN" : None}
 
         house_ground_floor.exits = {"N" : None, "E" : None, "S" : front_village, "O" : None, "UP" : pnj_floor, "DOWN" : None}
-        villageois = Character("Villageois", "un villageois au couteau suisse", house_ground_floor, ["Bonjour, si vous voulez procéder à des échanges faites-moi signe. !", "Quand il y a un doute, il n'y a pas de doute, venez procéder à un échange ici !"], False)
-        house_ground_floor.characters[villageois.name] = villageois
+        
         
         pnj_floor.exits = {"N" : None, "E" : None, "S" : None, "O" : None, "UP" : None, "DOWN" : house_ground_floor}
+        villageois = Character("villageois", "un villageois au couteau suisse", pnj_floor, ["Bonjour, si vous voulez procéder à des échanges faites-moi signe. !", "Quand il y a un doute, il n'y a pas de doute, venez procéder à un échange ici !"])
+        pnj_floor.characters[villageois.name] = villageois
 
         meadow.exits = {"N" : None, "E" : None, "S" : fontain, "O" : None, "UP" : None, "DOWN" : None}
+        meadow.inventory_room = {"beamer" : Item("beamer", "un téléporteur", 1)}
 
         fontain.exits = {"N" : meadow, "E" : front_cave, "S" : None, "O" : front_village, "UP" : None, "DOWN" : None}
 
         front_cave.exits = {"N" : None, "E" : None, "S" : forest3, "O" : fontain, "UP" : None, "DOWN" : iron_ore}
 
         iron_ore.exits = {"N" : diamond_ore, "E" : lava_lake, "S" : None, "O" : mob_cave, "UP" : front_cave, "DOWN" : None}
-        iron_ore.inventory_room  = Item("minerai de fer", "un minerai fiable et résistante", 0.5)
+        iron_ore.inventory_room  = {"fer" : Item("fer", "un minerai fiable et résistant", 0.5)}
 
         diamond_ore.exits = {"N" : None, "E" : None, "S" : iron_ore, "O" : None, "UP" : None, "DOWN" : None}
-        diamond_ore.inventory_room  = Item("minerai de diamant", "un minerai avec une solidité exceptionnelle", 1)
+        diamond_ore.inventory_room  = { "diamant" :Item("diamant", "un minerai avec une solidité exceptionnelle", 1)}
 
         mob_cave.exits = {"N" : stronghold, "E" : iron_ore, "S" : None, "O" : None, "UP" : None, "DOWN" : None}
+        zombie = Monster("zombie", 3, 1, mob_cave)
+        mob_cave.characters[zombie.name] = zombie
 
-        stronghold.exits = {"N" : None, "E" : None, "S" : mob_cave, "O" : portal_overwolrd, "UP" : None, "DOWN" : None}
 
-        enderdragon.exits = {"N" : None, "E" : None, "S" : None, "O" : None, "UP" : None, "DOWN" : None}
-        enderdragons = Character("Enderdragons", "Un dragon volatn dans le ciel", enderdragon, None, True, 250)
-        enderdragon.characters[zombie.name] = enderdragons
+        stronghold.exits = {"N" : None, "E" : None, "S" : mob_cave, "O" : enderdragon, "UP" : None, "DOWN" : None}
+
+        enderdragon.exits = {"N" : None, "E" : None, "S" : None, "O" : portal_overwolrd, "UP" : None, "DOWN" : None,}
+        dragon = Monster("dragon", "Un dragon noir volant à toute vitesse", 15, 4, enderdragon)
+        enderdragon.characters[dragon.name] = dragon
 
         portal_overwolrd.exits = {"N" : front_village, "E" : front_village, "S" : front_village, "O" : front_village, "UP" : None, "DOWN" : None}
 
@@ -170,9 +184,7 @@ class Game:
         portal_nether.exits = {"N" : None, "E" : portal_nether2, "S" : lava_lake, "O" : None, "UP" : None, "DOWN" : None}
 
         blaze_spawn.exits = {"N" : None, "E" : None, "S" : None, "O" : portal_nether2, "UP" : None, "DOWN" : None}
-        blaze_spawn.inventory_room = Item("Blaze rod", "un bâton particulier qui nous servira plus tard", 0.3)
-        blaze = Character("Blaze", "un monstre enflammée volant au dessus de vous", blaze_spawn, None, True, 75)
-        blaze_spawn.characters[blaze.name] = blaze
+        blaze_spawn.inventory_room = {"Blazerod" : Item("Blazerod", "un bâton particulier qui nous servira plus tard", 0.3)}
 
         portal_nether2.exits = {"N" : None, "E" : blaze_spawn, "S" : None, "O" : portal_nether, "UP" : None, "DOWN" : None}
 
@@ -188,6 +200,8 @@ class Game:
         self.print_welcome()
         # Loop until the game is finished
         while not self.finished:
+            if self.finished:
+                break
             # Get the command from the player
             self.process_command(input("> "))
         return None

@@ -1,7 +1,14 @@
 # Définition de la classe Player
-from item import *
+'''
+Author : Carvalho Allan & Brault Oscar
+'''
+
+from item import Item
 
 class Player:
+    '''
+    Classe Player
+    '''
     def __init__(self, name):
         """
         Initialise un nouveau joueur.
@@ -12,9 +19,11 @@ class Player:
         self.name = name
         self.current_room = None  # La pièce actuelle du joueur
         self.history = []  # Historique des pièces visitées
-        self.inventory_player = {"diamond_sword" : Item("épée en diamant", "une épée au fil tranchant comme un rasoir", 2)}  # Dictionnaire pour l'inventaire
+        self.inventory_player ={} #{"diamond_sword" : Item("épée en diamant", "une épée au fil tranchant comme un rasoir", 2)}
         self.max_poids = 15
-        
+        self.equipped_weapon = None  # Arme équipée par défaut
+        self.health = 20  # Points de vie du joueur
+
     def move(self, direction):
         """
         Déplace le joueur dans la direction spécifiée et met à jour l'historique.
@@ -72,8 +81,47 @@ class Player:
         if not self.inventory_player : # Si l'inventaire est vide
             return "Votre inventaire est vide."
 
+        inventory_list = ["Vous disposez des items suivants :"]
+        for item in self.inventory_player.values():
+            inventory_list.append(f"    - {item}")
+        return "\n".join(inventory_list)  # Retourne la chaîne formatée
+
+    def equip_weapon(self, weapon_name):
+        """
+        Équipe une arme de l'inventaire du joueur.
+
+        Args:
+            weapon_name (str): Le nom de l'arme à équiper.
+
+        Returns:
+            str: Message confirmant ou non l'équipement.
+        """
+        # Utilisation de inventory_player au lieu de inventory
+        if weapon_name in self.inventory_player:
+            self.equipped_weapon = self.inventory_player[weapon_name]
+            return f"Vous avez équipé {self.equipped_weapon.name}."
+        return "Cette arme n'est pas dans votre inventaire."
+
+    def attack(self, monster):
+        """
+        Attaque un monstre.
+
+        Args:
+            monster (Monster): Le monstre à attaquer.
+
+        Returns:
+            str: Résultat de l'attaque.
+        """
+        if self.equipped_weapon:
+            damage = self.equipped_weapon.weight
         else:
-            inventory_list = ["Vous disposez des items suivants :"]
-            for item in self.inventory_player.values():
-                inventory_list.append(f"    - {item}")
-            return "\n".join(inventory_list)  # Retourne la chaîne formatée
+            damage = 1  # Dégâts par défaut si aucune arme n'est équipée
+
+        monster.health -= damage
+
+        if monster.health <= 0:
+            if monster.name == "Ender Dragon":
+                print(f"\nVous avez tué le {monster.name} ! Vous avez gagné !")
+            else :
+                return f"Vous avez vaincu le {monster.name} !"
+        return f"Vous avez infligé {damage} de dégâts au {monster.name}. Il lui reste {monster.health} PV."
